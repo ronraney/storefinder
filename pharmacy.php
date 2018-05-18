@@ -72,4 +72,38 @@ function create(){
     return false;
      
 }
+// used when filling up the update pharmacy form
+function readOne(){
+ 
+    // query to read single record
+    $query = "SELECT
+                *
+            FROM
+                " . $this->table_name . " p
+            WHERE
+                p.id = ?
+            LIMIT
+                0,1";
+ 
+    // prepare query statement
+    $stmt = $this->conn->prepare( $query );
+ 
+    // bind id of product to be updated
+    $stmt->bindParam(1, $this->id);
+ 
+    // execute query
+    $stmt->execute();
+ 
+    // get retrieved row
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+ 
+    // set values to object properties
+    $this->name = $row['name'];
+    $this->address = $row['address'];
+    $this->city = $row['city'];
+    $this->state = $row['state'];    
+    $this->zip = $row['zip'];
+	 $this->lat = $row['lat'];
+	 $this->lng = $row['lng'];
+}
 }

@@ -57,10 +57,12 @@ function create(){
  
     // bind values
     $stmt->bindParam(":name", $this->name);
-    $stmt->bindParam(":price", $this->price);
-    $stmt->bindParam(":description", $this->description);
-    $stmt->bindParam(":category_id", $this->category_id);
-    $stmt->bindParam(":created", $this->created);
+    $stmt->bindParam(":address", $this->address);
+    $stmt->bindParam(":city", $this->city);
+    $stmt->bindParam(":state", $this->state);
+    $stmt->bindParam(":zip", $this->zip);
+    $stmt->bindParam(":lat", $this->lat);
+    $stmt->bindParam(":lng", $this->lng);
  
     // execute query
     if($stmt->execute()){
