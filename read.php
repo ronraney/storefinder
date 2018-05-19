@@ -40,7 +40,7 @@ if($num>0){
             "state" => $state,
             "zip" => $zip,
             "lat" => $lat,
-            "lng" => $lng
+            "lng" => $lng,
         );
  
         array_push($pharmacies_arr["records"], $pharmacy_item);
