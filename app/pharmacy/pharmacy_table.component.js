@@ -1,7 +1,6 @@
 // component for the whole pharmacies table
 window.PharmaciesTable = React.createClass({
-    render: function() {
- 
+    render: function() { 
     var rows = this.props.pharmacies
         .map(function(pharmacy, i) {
             return (

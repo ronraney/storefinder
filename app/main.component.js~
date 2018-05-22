@@ -5,15 +5,15 @@ var MainApp = React.createClass({
     getInitialState: function(){
         return {
             currentMode: 'read',
-            productId: null
+            pharmacyId: null
         };
     },
  
     // used when use clicks something that changes the current mode
-    changeAppMode: function(newMode, productId){
+    changeAppMode: function(newMode, pharmacyId){
         this.setState({currentMode: newMode});
-            if(productId !== undefined){
-            this.setState({productId: productId});
+            if(pharmacyId !== undefined){
+            this.setState({pharmacyId: pharmacyId});
         }
     },
  
@@ -21,26 +21,16 @@ var MainApp = React.createClass({
     render: function(){
  
         var modeComponent =
-            <ReadProductsComponent
+            <ReadPharmaciesComponent
             changeAppMode={this.changeAppMode} />;
  
         switch(this.state.currentMode){
-            case 'read':
-                break;
-            case 'readOne':
-                modeComponent = <ReadOneProductComponent productId={this.state.productId} changeAppMode={this.changeAppMode}/>;
-                break;
-            case 'create':
-                modeComponent = <CreateProductComponent changeAppMode={this.changeAppMode}/>;
-                break;
-            case 'update':
-                modeComponent = <UpdateProductComponent productId={this.state.productId} changeAppMode={this.changeAppMode}/>;
-                break;
-            case 'delete':
-                modeComponent = <DeleteProductComponent productId={this.state.productId} changeAppMode={this.changeAppMode}/>;
-                break;
-            default:
-                break;
+            case 'read': break;
+            case 'readOne': modeComponent = <ReadOnePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>; break; 
+            case 'findOne': modeComponent = <FindOnePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>; break; 
+            case 'create': modeComponent = <CreatePharmacyComponent changeAppMode={this.changeAppMode}/>; break; 					case 'update': modeComponent = <UpdatePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>; break; 
+            case 'delete': modeComponent =  <DeletePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>; break;     
+            default: break;
         }
  
         return modeComponent;

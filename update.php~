@@ -6,19 +6,22 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
  
-// get database connection
+// include database and object files
 include_once 'database.php';
- 
-// instantiate product object
 include_once 'pharmacy.php';
  
+// get database connection
 $database = new Database();
 $db = $database->getConnection();
  
+// prepare pharmacy object
 $pharmacy = new Pharmacy($db);
  
-// get posted data-
+// get id of pharmacy to be edited
 $data = json_decode(file_get_contents("php://input"));
+ 
+// set ID property of pharmacy to be edited
+$pharmacy->id = $data->id;
  
 // set pharmacy property values
 $pharmacy->name = $data->name;
@@ -28,19 +31,19 @@ $pharmacy->state = $data->state;
 $pharmacy->zip = $data->zip;
 $pharmacy->lat = $data->lat;
 $pharmacy->lng = $data->lng;
-$pharmacy->created = date('Y-m-d H:i:s');
+$pharmacy->updated = date('Y-m-d H:i:s');
  
-// create the pharmacy
-if($pharmacy->create()){
+// update the pharmacy
+if($pharmacy->update()){
     echo '{';
-        echo '"message": "Pharmacy was created."';
+        echo '"message": "Pharmacy was updated."';
     echo '}';
 }
  
-// if unable to create the pharmacy, tell the user
+// if unable to update the pharmacy, tell the user
 else{
     echo '{';
-        echo '"message": "Unable to create pharmacy."';
+        echo '"message": "Unable to update pharmacy."';
     echo '}';
 }
 ?>

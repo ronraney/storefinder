@@ -24,8 +24,6 @@ window.PharmaciesTable = React.createClass({
                             <th>City</th>
                             <th>State</th>
                             <th>Zip</th>
-                            <th>Lat</th>
-                            <th>Lng</th>
                         </tr>
                     </thead>
                     <tbody>

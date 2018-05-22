@@ -106,6 +106,40 @@ function readOne(){
 	 $this->lat = $row['lat'];
 	 $this->lng = $row['lng'];
 }
+// used when filling up the update pharmacy form
+function findOne(){
+ 
+    // query to read single record
+    $query = "SELECT
+                *
+            FROM
+                " . $this->table_name . " p
+            WHERE
+                p.id <= 5
+            LIMIT
+                0,1";
+ 
+    // prepare query statement
+    $stmt = $this->conn->prepare( $query );
+ 
+    // bind id of product to be updated
+    $stmt->bindParam(1, $this->id);
+ 
+    // execute query
+    $stmt->execute();
+ 
+    // get retrieved row
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+ 
+    // set values to object properties
+    $this->name = $row['name'];
+    $this->address = $row['address'];
+    $this->city = $row['city'];
+    $this->state = $row['state'];    
+    $this->zip = $row['zip'];
+	 $this->lat = $row['lat'];
+	 $this->lng = $row['lng'];
+}
 // update the product
 function update(){
  
@@ -115,7 +149,7 @@ function update(){
             SET
                 name=:name, address=:address, city=:city, state=:state, zip=:zip, lat=:lat, lng=:lng;
             WHERE
-                id = :id";
+                id =:id";
  
     // prepare query statement
     $stmt = $this->conn->prepare($query);
@@ -223,5 +257,15 @@ public function readPaging($from_record_num, $records_per_page){
  
     // return values from database
     return $stmt;
+}
+// used for paging products
+public function count(){
+    $query = "SELECT COUNT(*) as total_rows FROM " . $this->table_name . "";
+ 
+    $stmt = $this->conn->prepare( $query );
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+ 
+    return $row['total_rows'];
 }
 }

@@ -223,7 +223,7 @@ render: function() {
                         type='text'
                         className='form-control'
                         required
-                        value={this.state.lng}
+                        value={this.state.longtitude}
                         onChange={this.onLngChange}>
                         </textarea>
                     </td>

@@ -25,22 +25,12 @@ var MainApp = React.createClass({
             changeAppMode={this.changeAppMode} />;
  
         switch(this.state.currentMode){
-            case 'read':
-                break;
-            case 'readOne':
-                modeComponent = <ReadOnePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>;
-                break;
-            case 'create':
-                modeComponent = <CreatePharmacyComponent changeAppMode={this.changeAppMode}/>;
-                break;
-            case 'update':
-                modeComponent = <UpdatePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>;
-                break;
-            case 'delete':
-                modeComponent = <DeletePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>;
-                break;
-            default:
-                break;
+            case 'read': break;
+            case 'readOne': modeComponent = <ReadOnePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>; break; 
+            case 'findOne': modeComponent = <FindOnePharmacyComponent changeAppMode={this.changeAppMode}/>; break; 
+            case 'create': modeComponent = <CreatePharmacyComponent changeAppMode={this.changeAppMode}/>; break; 					case 'update': modeComponent = <UpdatePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>; break; 
+            case 'delete': modeComponent =  <DeletePharmacyComponent pharmacyId={this.state.pharmacyId} changeAppMode={this.changeAppMode}/>; break;     
+            default: break;
         }
  
         return modeComponent;

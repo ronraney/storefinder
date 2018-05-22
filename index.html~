@@ -28,7 +28,12 @@
  
     <!-- container -->
     <div class="container">
- 
+ 		  <div>
+                <a href='#'
+                    onClick={() => this.props.changeAppMode('findOne')}
+                    className='btn btn-primary margin-bottom-1em'> Find pharmacy
+                </a>                
+        </div>
         <div class="page-header">
             <h1>Loading...</h1>
         </div>
