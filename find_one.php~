@@ -20,7 +20,7 @@ $pharmacy = new Pharmacy($db);
 $pharmacy->id = isset($_GET['id']) ? $_GET['id'] : die();
  
 // read the details of pharmacy to be edited
-$pharmacy->readOne();
+$pharmacy->findOne();
  
 // create array
 $pharmacy_arr = array(

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>My Geocode App</title>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+	<div class="container">
+		<h2 id="text-center"></h2>
+		<form id="location-form">
+			<h3>Enter a location:</h3>
+			<input onFocus="this.value=''" type="text" id="location-input" class="mb-3 form-control form-control-lg">
+			<button type="submit" class="btn btn-outline-primary btn-block">Submit</button>
+		</form>
+		<div class="card-block m-3" id="coordinates"></div>
+		<form id="finder-form">
+			<button type="submit" class="btn btn-outline-info btn-block">Find A Store</button>
+		</form>	
+		<div class="card-block m-3" id="nearby-stores"></div>	
+	</div>
+	<script>
+
+		var locationForm = document.getElementById('location-form');
+		locationForm.addEventListener('submit', geocode);
+
+		var finderForm = document.getElementById('finder-form');
+		finderForm.addEventListener('submit', finder);
+
+		function geocode(e){
+			e.preventDefault();
+
+			var location = document.getElementById('location-input').value;
+			axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+				params:{
+					address: location,
+					key: 'AIzaSyAyZR0ze1UlbCywpr3CExkMWIk0eKLH8oc'
+				}
+			})
+			.then(function(response) {
+				console.log(response);
+				/*var formattedAddress = response.data.results[0].formatted_address;
+				var formattedAddressOutput = `
+					<ul class="list-group">
+						<li class="list-group-item">${formattedAddress}</li>
+					</ul>					
+				`;
+				var addressComponents = response.data.results[0].address_components;
+				var addressComponentsOutput = '<ul class="list-group">';
+
+				for(i = 0;i < addressComponents.length;i++ ) {
+					addressComponentsOutput += `
+						<li class="list-group-item"><strong>${addressComponents[i].types[0]}</strong> ${addressComponents[i].long_name}</li>
+					`;
+				}
+				addressComponentsOutput += '</ul>';*/
+
+				var latitude = response.data.results[0].geometry.location.lat;
+				var longitude = response.data.results[0].geometry.location.lng;
+				var coordinatesOutput = `
+					<ul class="list-group">
+						<li class="list-group-item"><strong>Latitude: </strong>${latitude}</li>
+						<li class="list-group-item"><strong>Longitude: </strong>${longitude}</li>
+					</ul>
+				`;
+				document.getElementById('coordinates').innerHTML = coordinatesOutput;
+			})
+			.catch(function(error){
+				console.log(error);
+			});
+		}
+		function finder(e, latitude, longitude) {
+			e.preventDefault();
+
+			var geo_lat = latitude;
+			var geo_lng = longitude;
+
+			axios.post('http://localhost/rx_finder/finder.php', {
+					geo_lat: geo_lat,
+					geo_lng: geo_lng
+			})
+				.then(function(response) {
+					console.log(response);
+					/*var nearbyStores = response.data.results[];
+					var nearbyStoresOutput = '<ul class="list-group">';
+
+					for(i = 0;i < nearbyStores.length;i++ ) {
+						nearbyStoresOutput += `
+						<li class="list-group-item"><strong>${nearbyStores[i].types[0]}</strong> ${nearbyStoress[i].long_name}</li>
+						`;
+					}
+						nearbyStoresOutput += '</ul>';
+					})
+					document.getElementById('nearby-stores').innerHTML = nearbyStoresOutput;*/
+				})
+				.catch(function(error){
+					console.log(error);
+				});
+		}
+	</script>	
+</body>
+</html>

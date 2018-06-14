@@ -14,6 +14,10 @@ class Pharmacy{
     public $zip;
     public $lat;
     public $lng;
+    public $latpoint;
+    public $longpoint;
+    
+
  
     // constructor with $db as database connection
     public function __construct($db){
@@ -106,18 +110,34 @@ function readOne(){
 	 $this->lat = $row['lat'];
 	 $this->lng = $row['lng'];
 }
-// used when filling up the update pharmacy form
+// find a pharmacy given lat and long from browser
 function findOne(){
- 
+
     // query to read single record
-    $query = "SELECT
-                *
-            FROM
-                " . $this->table_name . " p
-            WHERE
-                p.id <= 5
-            LIMIT
-                0,1";
+    $query = "
+		SELECT z.zip,
+        z.city, z.state
+        z.lat, z.lng,
+        p.distance_unit
+                 * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                 * COS(RADIANS(z.lat))
+                 * COS(RADIANS(p.longpoint) - RADIANS(z.lng))
+                 + SIN(RADIANS(p.latpoint))
+                 * SIN(RADIANS(z.lat)))) AS distance
+  FROM pharmacies AS z
+  JOIN (   /* these are the query parameters */
+        SELECT  " . $this->latpoint . "  AS latpoint, " . $this->longpoint . " AS longpoint,
+                50.0 AS radius,      69.0 AS distance_unit
+    ) AS p ON 1=1
+  WHERE z.lat
+     BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+         AND p.latpoint  + (p.radius / p.distance_unit)
+    AND z.lng
+     BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+         AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+  ORDER BY distance
+  LIMIT 10  
+    ";
  
     // prepare query statement
     $stmt = $this->conn->prepare( $query );
@@ -132,6 +152,7 @@ function findOne(){
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
  
     // set values to object properties
+    $this->id = $row['id'];
     $this->name = $row['name'];
     $this->address = $row['address'];
     $this->city = $row['city'];

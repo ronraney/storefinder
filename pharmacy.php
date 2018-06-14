@@ -14,12 +14,16 @@ class Pharmacy{
     public $zip;
     public $lat;
     public $lng;
+    public $latkey;
+    public $lngkey;
+    
+
  
     // constructor with $db as database connection
     public function __construct($db){
         $this->conn = $db;
     }
-// read products
+// read pharmacies
 function read(){
     // select all query
     $query = "SELECT
@@ -106,40 +110,7 @@ function readOne(){
 	 $this->lat = $row['lat'];
 	 $this->lng = $row['lng'];
 }
-// used when filling up the update pharmacy form
-function findOne(){
- 
-    // query to read single record
-    $query = "SELECT
-                *
-            FROM
-                " . $this->table_name . " p
-            WHERE
-                p.id = ?
-            LIMIT
-                0,1";
- 
-    // prepare query statement
-    $stmt = $this->conn->prepare( $query );
- 
-    // bind id of product to be updated
-    $stmt->bindParam(1, $this->id);
- 
-    // execute query
-    $stmt->execute();
- 
-    // get retrieved row
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
- 
-    // set values to object properties
-    $this->name = $row['name'];
-    $this->address = $row['address'];
-    $this->city = $row['city'];
-    $this->state = $row['state'];    
-    $this->zip = $row['zip'];
-	 $this->lat = $row['lat'];
-	 $this->lng = $row['lng'];
-}
+
 // update the product
 function update(){
  
@@ -202,14 +173,14 @@ function delete(){
     return false;
      
 }
-// search products
+// search pharmacies
 function search($keywords){
  
     // select all query
     $query = "SELECT
                 *
             FROM
-                " . $this->table_name . " p
+                " . $this->table_name . " p 
             WHERE
                 p.name LIKE ? OR p.address LIKE ? OR p.city LIKE ? OR p.state LIKE ? OR p.zip LIKE ?
             ORDER BY
@@ -234,7 +205,51 @@ function search($keywords){
  
     return $stmt;
 }
-// read products with pagination
+// search pharmacies
+function finder($latkey, $lngkey){
+
+    // select all query
+    $query = "
+    SELECT id, city, lat, lng, distance
+    FROM (
+        SELECT z.id, z.lat, z.lng,
+            p.radius, p.distance_unit
+                     * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                     * COS(RADIANS(z.lat))
+                     * COS(RADIANS(p.longpoint - z.lng))
+                     + SIN(RADIANS(p.latpoint))
+                     * SIN(RADIANS(z.lat)))) AS distance
+        FROM " . $this->table_name . " AS z
+        JOIN (   /* these are the query parameters */
+            SELECT  " . $latkey . "  AS latpoint,  " . $lngkey . " AS longpoint,
+                    25.0 AS radius,      69.0 AS distance_unit
+        ) AS p ON 1=1
+        WHERE z.lat
+         BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+             AND p.latpoint  + (p.radius / p.distance_unit)
+        AND z.lng
+         BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+             AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+        AS d)
+        WHERE distance <= radius
+        ORDER BY distance
+        LIMIT 10
+    ";
+ 
+    // prepare query statement
+    $stmt = $this->conn->prepare($query);
+
+        // bind
+    $stmt->bindParam(':latkey', $latkey);
+    $stmt->bindParam(':lngkey', $lngkey);
+
+    // execute query
+    $stmt->execute();
+ 
+    return $stmt;
+}
+
+// read pharmacies with pagination
 public function readPaging($from_record_num, $records_per_page){
  
     // select query
@@ -258,7 +273,7 @@ public function readPaging($from_record_num, $records_per_page){
     // return values from database
     return $stmt;
 }
-// used for paging products
+// used for paging pharmacies
 public function count(){
     $query = "SELECT COUNT(*) as total_rows FROM " . $this->table_name . "";
  
